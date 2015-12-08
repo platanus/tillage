@@ -5,7 +5,7 @@ include_module() {
   export MODULE_NAME=$(basename "$1")
   export MODULE_PATH="$1"
 
-  cd "$TILLAGE_HOME"
+  cd "$TILLAGE_REPO"
 
   if [ -d "$MODULE_PATH" ]; then
     log "Installing $MODULE_NAME module:"

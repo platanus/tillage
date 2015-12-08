@@ -1,0 +1,4 @@
+brew 'rbenv'
+brew 'rbenv-vars'
+brew 'rbenv-aliases'
+brew 'ruby-build'

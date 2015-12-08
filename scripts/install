@@ -1,0 +1,95 @@
+#!/bin/bash
+set -e
+
+# Parse arguments
+for arg in "$@"
+do
+  if [ "$arg" = "--debug" ]; then
+    TILLAGE_DEBUG="1"
+    export STRAP_DEBUG="1"
+    set -x
+  fi
+done
+
+TILLAGE_INSTALL_SCRIPT_PATH="$(cd "$(dirname "$0")" && pwd)/$(basename "$0")"
+
+TILLAGE_INSTALL_SUCCESS=""
+export TILLAGE_INSTALL="1"
+
+# Clean install
+install-cleanup(){
+  set +e
+  sudo -k
+  rm -rf "$TILLAGE_INSTALL_TMP"
+  rm -f "$TILLAGE_INSTALL_SCRIPT_PATH"
+  if [ -n "$TILLAGE_INSTALL_SUCCESS" ]; then
+    echo "Installation successful." >&2
+    echo "Installed in $TILLAGE_INSTALL_PATH" >&2
+    printf "Remember to\e[1;32m source %s/env.sh\e[0m to your environment\n" "$TILLAGE_INSTALL_PATH">&2
+  fi
+}
+
+trap "install-cleanup" EXIT
+
+# show the banner and wait for a response
+printf "%s" $'\e[1;32m
+      _______ _ _ _
+      |__  __(_) | |
+        | |   _| | | __ _  __ _  ___
+        | |  | | | |/ _` |/ _` |/ _ \
+        | |  | | | | (_| | (_| |  __/
+        |_|  |_|_|_|\__,_|\__, |\___|
+                           __/ |
+                          |___/\e[1;31m
+\e[0m
+    Hello! I\'m going to set up this machine for you. It might take me a bit
+    of time before I\'m done, but you\'ll end up with a happy machine by the
+    end of it. (by boxen)
+\e[0;1m
+    Ready to get started? Hit a key to continue.\e[0m'
+read -r
+
+# Check os requirement
+sw_vers -productVersion | grep -q -E "^10.(11)" || {
+  echo "Run Tillage on Mac OS X 10.11." >&2; exit 1;
+}
+
+# Set Variables
+TILLAGE_REPO_URL=
+TILLAGE_ISSUES_URL=
+TILLAGE_INSTALL_PATH=
+TILLAGE_INSTALL_REPO="$TILLAGE_INSTALL_PATH/repo"
+TILLAGE_INSTALL_TMP="/tmp/install-tillage"
+
+# Git config variables
+export STRAP_GIT_NAME=
+export STRAP_GIT_EMAIL=
+export STRAP_GITHUB_USER=
+export STRAP_GITHUB_TOKEN=
+
+# Download Tillage for first time
+echo "--> Downloading tillage ..."
+mkdir -p "$TILLAGE_INSTALL_TMP"
+chown "$USER:staff" "$TILLAGE_INSTALL_TMP"
+
+curl --progress-bar -L $TILLAGE_REPO_URL/archive/HEAD.tar.gz | tar xz --directory "$TILLAGE_INSTALL_TMP" --strip=1
+echo "OK";
+
+echo "--> Running tillage ..."
+cd "$TILLAGE_INSTALL_TMP"
+./bin/tillage-strap
+
+echo "--> Final touches ..."
+sudo mkdir -p "$TILLAGE_INSTALL_REPO"
+sudo chown -R "$USER:staff" "$TILLAGE_INSTALL_PATH"
+
+if [ ! -d "$TILLAGE_INSTALL_REPO/.git" ]; then
+  git clone -q $TILLAGE_REPO_URL $TILLAGE_INSTALL_REPO
+else
+  cd $TILLAGE_INSTALL_REPO
+  git pull -q
+fi
+ln -sf $TILLAGE_INSTALL_REPO/bin/tillage /usr/local/bin/tillage
+echo "OK";
+
+TILLAGE_INSTALL_SUCCESS="1"

@@ -1,0 +1,32 @@
+#!/bin/sh
+include_module() {
+  set -e
+
+  export MODULE_NAME=$(basename "$1")
+  export MODULE_PATH="$1"
+
+  cd "$TILLAGE_HOME"
+
+  if [ -d "$MODULE_PATH" ]; then
+    log "Installing $MODULE_NAME module:"
+
+    export MODULE_BREWFILE_PATH="$MODULE_PATH/Brewfile"
+    export MODULE_SCRIPT_PATH="$MODULE_PATH/$MODULE_NAME.sh"
+
+    # Install Modules Brewfile
+    if [ -f "$MODULE_BREWFILE_PATH" ]; then
+      brew bundle --file="$MODULE_BREWFILE_PATH"
+    fi
+
+    # Run module script
+    if [ -f "$MODULE_SCRIPT_PATH" ]; then
+      #shellcheck disable=1090
+      sh "$MODULE_SCRIPT_PATH"
+    fi
+    logk
+  else
+    log "$1 not found"
+  fi
+}
+
+export -f include_module

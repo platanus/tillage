@@ -1,0 +1,20 @@
+cask 'google-chrome'
+cask 'java'
+cask 'pgadmin3'
+cask 'screenhero'
+cask 'sequel-pro'
+cask 'slack'
+cask 'toggldesktop'
+brew 'chromedriver'
+brew 'elasticsearch', restart_service: true
+brew 'hub'
+brew 'imagemagick'
+brew 'libpng'
+brew 'libyaml'
+brew 'mysql', restart_service: true
+brew 'nginx', restart_service: true
+brew 'node'
+brew 'openssl'
+brew 'postgis'
+brew 'postgresql', restart_service: true
+brew 'redis', restart_service: true

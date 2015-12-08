@@ -5,22 +5,19 @@ set +u
 
 # Make the root of Boxen available.
 
-export TILLAGE_HOME=/Volumes/SharedFolders/src/tillage
+export TILLAGE_HOME=
 
 # Add any binaries specific to tillage to the path.
-PATH=$TILLAGE_HOME/bin:$PATH
-
-for f in $TILLAGE_HOME/modules/**/env.sh ; do
-  if [ -f "$f" ] ; then
+for env_file in $TILLAGE_HOME/env.d/*.sh ; do
+  if [ -f "$env_file" ] ; then
     #shellcheck disable=1090
-    . "$f"
+    . "$env_file"
   fi
 done
 
-# # Boxen is active.
-#
-# if [ -d "$TILLAGE_HOME/repo/.git" ]; then
-#   export BOXEN_SETUP_VERSION=`GIT_DIR=$TILLAGE_HOME/repo/.git git rev-parse --short HEAD`
-# else
-#   echo "Boxen could not load properly!"
-# fi
+# Tillage is active.
+if [ -d "$TILLAGE_HOME/repo/.git" ]; then
+  export TILLAGE_SETUP_VERSION=`GIT_DIR=$TILLAGE_HOME/repo/.git git rev-parse --short HEAD`
+else
+  echo "Tillage could not load properly!"
+fi

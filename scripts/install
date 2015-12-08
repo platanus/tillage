@@ -90,6 +90,33 @@ else
   git pull -q
 fi
 ln -sf $TILLAGE_INSTALL_REPO/bin/tillage /usr/local/bin/tillage
+
+cat <<EOF > "$TILLAGE_INSTALL_PATH/env.sh"
+#!/bin/bash
+
+set +e
+set +u
+
+# Make the root of Tillage available.
+export TILLAGE_HOME=$TILLAGE_INSTALL_PATH
+
+# Add any binaries specific to tillage to the path.
+for env_file in "$TILLAGE_HOME"/env.d/*.sh ; do
+  if [ -f "$env_file" ] ; then
+    #shellcheck disable=1090
+    . "$env_file"
+  fi
+done
+
+# Tillage is active.
+if [ -d "$TILLAGE_HOME/repo/.git" ]; then
+  export TILLAGE_SETUP_VERSION=`GIT_DIR=$TILLAGE_HOME/repo/.git git rev-parse --short HEAD`
+else
+  echo "Tillage could not load properly!"
+fi
+EOF
+
+
 echo "OK";
 
 TILLAGE_INSTALL_SUCCESS="1"

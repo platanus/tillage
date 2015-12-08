@@ -209,7 +209,6 @@ for helper in $STRAP_HOME/helpers/*; do
   fi
 done
 
-include_module "modules/environment"
 include_module "modules/ruby"
 include_module "modules/platanus"
 

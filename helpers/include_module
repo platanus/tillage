@@ -5,6 +5,12 @@ include_module() {
   export MODULE_NAME=$(basename "$1")
   export MODULE_PATH="$1"
 
+  case $2 in
+      ''|*[!0-9]*) MODULE_ENV_PRIORITY=20 ;;
+      *) MODULE_ENV_PRIORITY=$2 ;;
+  esac
+  export MODULE_ENV_PRIORITY
+
   cd "$TILLAGE_REPO"
 
   if [ -d "$MODULE_PATH" ]; then
@@ -12,6 +18,7 @@ include_module() {
 
     export MODULE_BREWFILE_PATH="$MODULE_PATH/Brewfile"
     export MODULE_SCRIPT_PATH="$MODULE_PATH/$MODULE_NAME.sh"
+    export MODULE_ENV_PATH="$MODULE_PATH/env.sh"
 
     # Install Modules Brewfile
     if [ -f "$MODULE_BREWFILE_PATH" ]; then
@@ -23,6 +30,15 @@ include_module() {
       #shellcheck disable=1090
       sh "$MODULE_SCRIPT_PATH"
     fi
+
+    # Add enviroment script to env.d
+    if [ -f "$MODULE_ENV_PATH" ]; then
+      if [ -f $TILLAGE_ENV_PATH/*$MODULE_NAME.sh ]; then
+        rm -f $TILLAGE_ENV_PATH/*$MODULE_NAME.sh
+      fi
+      cp "$TILLAGE_REPO/$MODULE_PATH/env.sh" "$TILLAGE_ENV_PATH/$MODULE_ENV_PRIORITY-$MODULE_NAME.sh"
+    fi
+
     logk
   else
     log "$1 not found"

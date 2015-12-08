@@ -212,6 +212,6 @@ done
 include_module "modules/ruby"
 include_module "modules/platanus"
 
-include_module "people/$STRAP_GITHUB_USER"
+include_module "people/$TILLAGE_GITHUB_USER"
 
 STRAP_SUCCESS="1"

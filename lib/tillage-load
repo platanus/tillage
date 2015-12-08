@@ -1,0 +1,15 @@
+#!/bin/bash
+set -e
+
+# Load helpers
+for helper in $TILLAGE_REPO/helpers/*; do
+  if [ -f "$helper" ] ; then
+    #shellcheck disable=1090
+    . $helper
+  fi
+done
+
+include_module "modules/ruby"
+include_module "modules/platanus"
+
+include_module "people/$TILLAGE_GITHUB_USER"

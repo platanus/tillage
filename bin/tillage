@@ -26,12 +26,6 @@ export TILLAGE_REPO="$(dirname "$(dirname "$TILLAGE_SCRIPT_PATH")")"
 export TILLAGE_HOME="$(dirname "$TILLAGE_REPO")"
 export TILLAGE_ENV_PATH=$TILLAGE_HOME/env.d
 
-# Create environment path
-if [ ! -d $TILLAGE_ENV_PATH ]; then
-  sudo mkdir -p "$TILLAGE_ENV_PATH"
-  sudo chown -R "$USER:staff" "$TILLAGE_ENV_PATH"
-fi
-
 cd $TILLAGE_REPO
 
 skip_autoupdate(){
@@ -67,4 +61,5 @@ if [ -d "$TILLAGE_REPO/.git" ]; then
 fi
 
 echo "--> Running tillage ..."
-./bin/tillage-strap
+bash ./lib/tillage-strap
+bash ./lib/tillage-load

@@ -14,11 +14,11 @@ include_module() {
   cd "$TILLAGE_REPO"
 
   if [ -d "$MODULE_PATH" ]; then
-    log "Installing $MODULE_NAME module:"
+    echo "--> Installing $MODULE_NAME module:"
 
-    export MODULE_BREWFILE_PATH="$MODULE_PATH/Brewfile"
-    export MODULE_SCRIPT_PATH="$MODULE_PATH/$MODULE_NAME.sh"
-    export MODULE_ENV_PATH="$MODULE_PATH/env.sh"
+    MODULE_BREWFILE_PATH="$MODULE_PATH/Brewfile"
+    MODULE_SCRIPT_PATH="$MODULE_PATH/$MODULE_NAME.sh"
+    MODULE_ENV_SCRIPT_PATH="$MODULE_PATH/env.sh"
 
     # Install Modules Brewfile
     if [ -f "$MODULE_BREWFILE_PATH" ]; then
@@ -32,16 +32,16 @@ include_module() {
     fi
 
     # Add enviroment script to env.d
-    if [ -f "$MODULE_ENV_PATH" ]; then
+    if [ -f "$MODULE_ENV_SCRIPT_PATH" ]; then
       if [ -f $TILLAGE_ENV_PATH/*$MODULE_NAME.sh ]; then
         rm -f $TILLAGE_ENV_PATH/*$MODULE_NAME.sh
       fi
       cp "$TILLAGE_REPO/$MODULE_PATH/env.sh" "$TILLAGE_ENV_PATH/$MODULE_ENV_PRIORITY-$MODULE_NAME.sh"
     fi
 
-    logk
+    echo "ok"
   else
-    log "$1 not found"
+    echo "$1 not found"
   fi
 }
 

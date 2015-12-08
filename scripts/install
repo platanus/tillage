@@ -11,17 +11,15 @@ do
   fi
 done
 
-TILLAGE_INSTALL_SCRIPT_PATH="$(cd "$(dirname "$0")" && pwd)/$(basename "$0")"
-
 TILLAGE_INSTALL_SUCCESS=""
-export TILLAGE_INSTALL="1"
 
 # Clean install
 install-cleanup(){
   set +e
   sudo -k
-  rm -rf "$TILLAGE_INSTALL_TMP"
+  TILLAGE_INSTALL_SCRIPT_PATH="$(cd "$(dirname "$0")" && pwd)/$(basename "$0")"
   rm -f "$TILLAGE_INSTALL_SCRIPT_PATH"
+  rm -rf "$TILLAGE_INSTALL_TMP"
   if [ -n "$TILLAGE_INSTALL_SUCCESS" ]; then
     echo "Installation successful." >&2
     echo "Installed in $TILLAGE_INSTALL_PATH" >&2
@@ -54,6 +52,12 @@ sw_vers -productVersion | grep -q -E "^10.(11)" || {
   echo "Run Tillage on Mac OS X 10.11." >&2; exit 1;
 }
 
+# Git config variables
+export STRAP_GIT_NAME=
+export STRAP_GIT_EMAIL=
+export STRAP_GITHUB_USER=
+export STRAP_GITHUB_TOKEN=
+
 # Set Variables
 TILLAGE_REPO_URL=
 TILLAGE_ISSUES_URL=
@@ -61,14 +65,15 @@ TILLAGE_INSTALL_PATH=
 TILLAGE_INSTALL_REPO="$TILLAGE_INSTALL_PATH/repo"
 TILLAGE_INSTALL_TMP="/tmp/install-tillage"
 
-export TILLAGE_HOME=$TILLAGE_INSTALL_PATH
-export TILLAGE_REPO=$TILLAGE_INSTALL_REPO
+export TILLAGE_REPO=$TILLAGE_INSTALL_TMP
+export TILLAGE_ENV_PATH=$TILLAGE_INSTALL_PATH/env.d
+export TILLAGE_GITHUB_USER=$STRAP_GITHUB_USER
 
-# Git config variables
-export STRAP_GIT_NAME=
-export STRAP_GIT_EMAIL=
-export STRAP_GITHUB_USER=
-export STRAP_GITHUB_TOKEN=
+# Preparing folder structure
+sudo mkdir -p "$TILLAGE_INSTALL_REPO"
+sudo mkdir -p "$TILLAGE_ENV_PATH"
+sudo chown -R "$USER:staff" "$TILLAGE_INSTALL_PATH"
+sudo chown -R "$USER:staff" "$TILLAGE_ENV_PATH"
 
 # Download Tillage for first time
 echo "--> Downloading tillage ..."
@@ -80,12 +85,10 @@ echo "OK";
 
 echo "--> Running tillage ..."
 cd "$TILLAGE_INSTALL_TMP"
-./bin/tillage-strap
+bash ./lib/tillage-strap
+bash ./lib/tillage-load
 
 echo "--> Final touches ..."
-sudo mkdir -p "$TILLAGE_INSTALL_REPO"
-sudo chown -R "$USER:staff" "$TILLAGE_INSTALL_PATH"
-
 if [ ! -d "$TILLAGE_INSTALL_REPO/.git" ]; then
   git clone -q $TILLAGE_REPO_URL $TILLAGE_INSTALL_REPO
 else

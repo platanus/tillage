@@ -1,10 +1,10 @@
 #!/bin/sh
 gem_install_or_update() {
   if gem list "$1" --installed > /dev/null; then
-    log "Updating $1 ..."
+    echo "Updating $1 ..."
     gem update "$@"
   else
-    log "Installing $1 ..."
+    echo "Installing $1 ..."
     gem install "$@"
     rbenv rehash
   fi

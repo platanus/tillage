@@ -83,6 +83,18 @@ The modules will install software and setup the environment when your shell is l
   fi
   ```
 
+  ###### Variables
+
+  In the module script you have access to the following  variables:
+
+  ```
+	TILLAGE_HOME=
+  TILLAGE_REPO=
+  TILLAGE_ENV_PATH=
+  MODULE_PATH=
+  MODULE_NAME=
+  ```
+
 - **environment script** `modules/<module_name>/env.<sh|fish>`
 
   This file will be sourced to config this module on shell start
@@ -129,4 +141,3 @@ The modules will install software and setup the environment when your shell is l
   - Clone your `dotfiles` repo and symlink the files into your home folder.
   - Clone or download your own `Brewfile` and run brew with it
   - Configure OSX defaults to customize your os
-

@@ -18,6 +18,21 @@ use OmniAuth::Builder do
   provider :github, GITHUB_KEY, GITHUB_SECRET, scope: "user:email,repo"
 end
 
+def get_install_script(auth = nil)
+  content = IO.read(File.expand_path("#{File.dirname(__FILE__)}/../scripts/install"))
+
+  if auth
+    content.gsub!(/(STRAP_GIT_NAME=)$/, "\\1\"#{auth['info']['name']}\"")
+    content.gsub!(/(STRAP_GIT_EMAIL=)$/, "\\1\"#{auth['info']['email']}\"")
+    content.gsub!(/(STRAP_GITHUB_USER=)$/, "\\1\"#{auth['info']['nickname']}\"")
+    content.gsub!(/(STRAP_GITHUB_TOKEN=)$/, "\\1\"#{auth['credentials']['token']}\"")
+  end
+
+  content.gsub!(/(TILLAGE_REPO_URL=)$/, "\\1\"#{TILLAGE_REPO_URL}\"")
+  content.gsub!(/(TILLAGE_INSTALL_PATH=)$/, "\\1\"#{TILLAGE_INSTALL_PATH}\"")
+  content.gsub!(/(TILLAGE_ISSUES_URL=)$/, "\\1\"#{TILLAGE_ISSUES_URL}\"")
+end
+
 get "/auth/github/callback" do
   session[:auth] = request.env["omniauth.auth"]
   return_to = session.delete :return_to
@@ -39,17 +54,7 @@ get "/" do
     redirect to "https://#{request.host}#{request.fullpath}"
   end
 
-  content = IO.read(File.expand_path("#{File.dirname(__FILE__)}/../scripts/install"))
-  content.gsub!(/(TILLAGE_REPO_URL=)$/, "\\1\"#{TILLAGE_REPO_URL}\"")
-  content.gsub!(/(TILLAGE_INSTALL_PATH=)$/, "\\1\"#{TILLAGE_INSTALL_PATH}\"")
-  content.gsub!(/(TILLAGE_ISSUES_URL=)$/, "\\1\"#{TILLAGE_ISSUES_URL}\"")
-
-  if auth
-    content.gsub!(/(STRAP_GIT_NAME=)$/, "\\1\"#{auth['info']['name']}\"")
-    content.gsub!(/(STRAP_GIT_EMAIL=)$/, "\\1\"#{auth['info']['email']}\"")
-    content.gsub!(/(STRAP_GITHUB_USER=)$/, "\\1\"#{auth['info']['nickname']}\"")
-    content.gsub!(/(STRAP_GITHUB_TOKEN=)$/, "\\1\"#{auth['credentials']['token']}\"")
-  end
+  content = get_install_script auth
 
   script_hash = Digest::SHA256.hexdigest("#{content}-#{Time.now.to_i}")[8..16]
   script_path = File.join(Dir.tmpdir, script_hash)
@@ -58,9 +63,18 @@ get "/" do
     f.puts content
   end
 
-  @install_script_url = "curl -s #{request.base_url}/install/#{script_hash} > /tmp/install-tillage.sh; bash /tmp/install-tillage.sh"
+  @install_script_url = "curl -s #{request.base_url}/install/#{script_hash} > \
+    /tmp/install-tillage.sh; bash /tmp/install-tillage.sh"
 
   erb :root
+end
+
+get "/install" do
+  content = get_install_script
+
+  content_type = params["text"] ? "text/plain" : "application/octet-stream"
+
+  erb content, content_type: content_type
 end
 
 get "/install/:hash" do

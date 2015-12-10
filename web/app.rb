@@ -19,7 +19,7 @@ use OmniAuth::Builder do
 end
 
 def get_install_script(auth = nil)
-  content = IO.read(File.expand_path("#{File.dirname(__FILE__)}/../scripts/install"))
+  content = IO.read(File.expand_path("#{File.dirname(__FILE__)}/../script/install"))
 
   if auth
     content.gsub!(/(STRAP_GIT_NAME=)$/, "\\1\"#{auth['info']['name']}\"")

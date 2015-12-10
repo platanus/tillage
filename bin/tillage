@@ -16,8 +16,8 @@ done
 TILLAGE_BRANCH="master"
 
 # Check os requirement
-sw_vers -productVersion | grep -q -E "^10.(11)" || {
-  echo "Run Tillage on Mac OS X 10.11." >&2; exit 1;
+sw_vers -productVersion | grep -q -E "^10.(9|10|11)" || {
+  echo "Run Tillage on Mac OS X 10.(9/10/11)" >&2; exit 1;
 }
 
 TILLAGE_SCRIPT_PATH="$(cd "$(dirname "$0")" && pwd)/$(basename "$0")"

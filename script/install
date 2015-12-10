@@ -50,8 +50,8 @@ if [ -z "$TILLAGE_CI" ]; then
 fi
 
 # Check os requirement
-sw_vers -productVersion | grep -q -E "^10.(11)" || {
-  echo "Run Tillage on Mac OS X 10.11." >&2; exit 1;
+sw_vers -productVersion | grep -q -E "^10.(9|10|11)" || {
+  echo "Run Tillage on Mac OS X 10.(9/10/11)" >&2; exit 1;
 }
 
 # Git config variables

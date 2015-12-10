@@ -111,7 +111,7 @@ export TILLAGE_HOME=$TILLAGE_INSTALL_PATH
 export TILLAGE_GITHUB_USER=$STRAP_GITHUB_USER
 
 # Add any binaries specific to tillage to the path.
-for env_file in "\$TILLAGE_HOME/env.d/*.sh" ; do
+for env_file in \$TILLAGE_HOME/env.d/*.sh ; do
   if [ -f \$env_file ] ; then
     . \$env_file
   fi

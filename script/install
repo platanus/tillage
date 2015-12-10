@@ -30,22 +30,24 @@ install-cleanup(){
 trap "install-cleanup" EXIT
 
 # show the banner and wait for a response
-printf "%s" $'\e[1;32m
-      _______ _ _ _
-      |__  __(_) | |
-        | |   _| | | __ _  __ _  ___
-        | |  | | | |/ _` |/ _` |/ _ \
-        | |  | | | | (_| | (_| |  __/
-        |_|  |_|_|_|\__,_|\__, |\___|
-                           __/ |
-                          |___/\e[1;31m
-\e[0m
-    Hello! I\'m going to set up this machine for you. It might take me a bit
-    of time before I\'m done, but you\'ll end up with a happy machine by the
-    end of it. (by boxen)
-\e[0;1m
-    Ready to get started? Hit a key to continue.\e[0m'
-read -r
+if [ -z "$TILLAGE_CI" ]; then
+  printf "%s" $'\e[1;32m
+        _______ _ _ _
+        |__  __(_) | |
+          | |   _| | | __ _  __ _  ___
+          | |  | | | |/ _` |/ _` |/ _ \
+          | |  | | | | (_| | (_| |  __/
+          |_|  |_|_|_|\__,_|\__, |\___|
+                             __/ |
+                            |___/\e[1;31m
+  \e[0m
+      Hello! I\'m going to set up this machine for you. It might take me a bit
+      of time before I\'m done, but you\'ll end up with a happy machine by the
+      end of it. (by boxen)
+  \e[0;1m
+      Ready to get started? Hit a key to continue.\e[0m'
+  read -r
+fi
 
 # Check os requirement
 sw_vers -productVersion | grep -q -E "^10.(11)" || {

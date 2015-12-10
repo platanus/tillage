@@ -21,5 +21,9 @@ wait "$SERVER_PID" || true
 SERVER_PID=
 
 export STRAP_CI=1
-export STRAP_DEBUG=1
-bash install
+export TILLAGE_CI=1
+bash install --debug
+
+# shellcheck disable=1091
+source /opt/tillage/env.sh
+[ -n "$TILLAGE_HOME" ]

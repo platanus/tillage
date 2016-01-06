@@ -9,6 +9,11 @@ for helper in $TILLAGE_REPO/helpers/*; do
   fi
 done
 
+# Update enviroment scripts
+render $TILLAGE_REPO/templates/env.sh > $TILLAGE_HOME/env.sh
+render $TILLAGE_REPO/templates/env.fish > $TILLAGE_HOME/env.fish
+
+# Include modules
 include_module "modules/ruby"
 include_module "modules/platanus"
 

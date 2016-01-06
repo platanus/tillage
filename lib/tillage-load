@@ -1,6 +1,10 @@
 #!/bin/bash
 set -e
 
+if [ -n "$STRAP_DEBUG" ]; then
+  set -x
+fi
+
 # Load helpers
 for helper in $TILLAGE_REPO/helpers/*; do
   if [ -f "$helper" ] ; then
@@ -9,7 +13,5 @@ for helper in $TILLAGE_REPO/helpers/*; do
   fi
 done
 
-include_module "modules/ruby"
 include_module "modules/platanus"
-
 include_module "people/$TILLAGE_GITHUB_USER"

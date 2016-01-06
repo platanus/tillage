@@ -148,8 +148,8 @@ logk
 
 # Setup Homebrew directories and permissions.
 logn "Installing Homebrew:"
-HOMEBREW_PREFIX="/usr/local"
-HOMEBREW_CACHE="/Library/Caches/Homebrew"
+export HOMEBREW_PREFIX="/usr/local"
+export HOMEBREW_CACHE="/Library/Caches/Homebrew"
 for dir in "$HOMEBREW_PREFIX" "$HOMEBREW_CACHE"; do
   [ -d "$dir" ] || sudo mkdir -p "$dir"
   sudo chown -R $USER:admin "$dir"

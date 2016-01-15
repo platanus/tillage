@@ -8,7 +8,6 @@ cask 'toggldesktop'
 brew 'chromedriver'
 brew 'elasticsearch', restart_service: true
 brew 'git'
-brew 'hub'
 brew 'imagemagick'
 brew 'libpng'
 brew 'libyaml'

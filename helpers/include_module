@@ -18,7 +18,16 @@ include_module() {
 
     MODULE_BREWFILE_PATH="$MODULE_PATH/Brewfile"
     MODULE_SCRIPT_PATH="$MODULE_PATH/$MODULE_NAME.sh"
-    MODULE_ENV_SCRIPT_PATH="$MODULE_PATH/env.sh"
+
+    # Add enviroment script to env.d
+    for ext in "sh" "fish"; do
+      if [ -f "$MODULE_PATH/templates/env.$ext" ]; then
+        if [ -f $TILLAGE_ENV_PATH/*$MODULE_NAME.$ext ]; then
+          rm -f $TILLAGE_ENV_PATH/*$MODULE_NAME.$ext
+        fi
+        render "$MODULE_PATH/templates/env.$ext" > "$TILLAGE_ENV_PATH/$MODULE_ENV_PRIORITY-$MODULE_NAME.$ext"
+      fi
+    done
 
     # Install Modules Brewfile
     if [ -f "$MODULE_BREWFILE_PATH" ]; then
@@ -26,17 +35,10 @@ include_module() {
     fi
 
     # Run module script
+    echo $MODULE_SCRIPT_PATH
     if [ -f "$MODULE_SCRIPT_PATH" ]; then
       #shellcheck disable=1090
       sh "$MODULE_SCRIPT_PATH"
-    fi
-
-    # Add enviroment script to env.d
-    if [ -f "$MODULE_ENV_SCRIPT_PATH" ]; then
-      if [ -f $TILLAGE_ENV_PATH/*$MODULE_NAME.sh ]; then
-        rm -f $TILLAGE_ENV_PATH/*$MODULE_NAME.sh
-      fi
-      cp "$TILLAGE_REPO/$MODULE_PATH/env.sh" "$TILLAGE_ENV_PATH/$MODULE_ENV_PRIORITY-$MODULE_NAME.sh"
     fi
 
     echo "ok"

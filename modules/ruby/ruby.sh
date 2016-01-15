@@ -6,11 +6,11 @@
 
 # Load ruby module environment
 # shellcheck disable=1090
-. $MODULE_PATH/env.sh
+. "$TILLAGE_HOME/env.d/$MODULE_ENV_PRIORITY-$MODULE_NAME.sh"
 
 # Install the latest ruby version
 ruby_version="$(curl -sSL http://ruby.platan.us/latest)"
-if ! rbenv versions | grep -Fq "$ruby_version"; then
+if ! rbenv versions --bare | grep -Fq "$ruby_version"; then
   rbenv install -s "$ruby_version"
 fi
 

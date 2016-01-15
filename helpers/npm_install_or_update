@@ -2,12 +2,10 @@
 npm_install_or_update() {
   if npm list --global --depth=0 --silent "$1" > /dev/null; then
     echo "Updating $1 ..."
-    npm upgrade --global "$@"
   else
     echo "Installing $1 ..."
-    npm install --global "$@"
-    nodenv rehash
   fi
+  npm install --global "$@"
 }
 
 export -f npm_install_or_update

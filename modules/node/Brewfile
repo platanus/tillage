@@ -1,0 +1,5 @@
+tap 'platanus/nodenv'
+brew 'nodenv'
+brew 'nodenv-vars'
+brew 'nodenv-aliases'
+brew 'node-build'

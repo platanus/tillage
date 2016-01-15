@@ -15,6 +15,7 @@ render $TILLAGE_REPO/templates/env.fish > $TILLAGE_HOME/env.fish
 
 # Include modules
 include_module "modules/ruby"
+include_module "modules/node"
 include_module "modules/platanus"
 
 include_module "people/$TILLAGE_GITHUB_USER"

@@ -7,6 +7,9 @@
 # Make the root of Boxen available.
 set -gx TILLAGE_HOME $TILLAGE_HOME
 
+# Make the github username available
+set -gx TILLAGE_GITHUB_USER $STRAP_GITHUB_USER
+
 # Source any module specific env file
 for env_file in \$TILLAGE_HOME/env.d/*.fish
   if [ -f \$env_file ]

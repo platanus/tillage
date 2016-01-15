@@ -18,4 +18,6 @@ include_module "modules/ruby"
 include_module "modules/node"
 include_module "modules/platanus"
 
-include_module "people/$TILLAGE_GITHUB_USER"
+if [ -n "$TILLAGE_GITHUB_USER" ]; then
+  include_module "people/$TILLAGE_GITHUB_USER"
+fi

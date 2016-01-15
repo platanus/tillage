@@ -93,7 +93,12 @@ The modules will install software and setup the environment when your shell is l
   TILLAGE_ENV_PATH=
   MODULE_PATH=
   MODULE_NAME=
-  ```
+  MODULE_ENV_PRIORITY=
+	```
+
+	###### Helpers
+
+	You also have access to the helpers defined in `helpers/`
 
 - **environment script** `modules/<module_name>/env.<sh|fish>`
 
@@ -109,25 +114,27 @@ The modules will install software and setup the environment when your shell is l
 
   # Configure RBENV_ROOT and put RBENV_ROOT/bin on PATH
   export RBENV_ROOT=/usr/local/opt/rbenv
-  export PATH=$RBENV_ROOT/bin:$PATH
+  export PATH=\$RBENV_ROOT/bin:\$PATH
 
   # Load rbenv
-  eval "$(rbenv init -)"
+  eval "\$(rbenv init -)"
   ```
 
   ```bash
   # ruby/env.fish
 
   # Allow bundler to use all the cores for parallel installation
-  set -gx BUNDLE_JOBS=4
+  set -gx BUNDLE_JOBS 4
 
   # Configure RBENV_ROOT and put RBENV_ROOT/bin on PATH
   set -gx RBENV_ROOT /usr/local/opt/rbenv
-  set -gx PATH $RBENV_ROOT/bin $PATH
+  set -gx PATH \$RBENV_ROOT/bin \$PATH
 
   # Load rbenv
   source (rbenv init - | psub)
   ```
+
+	> note that you need to escape the variables you don't want expanded
 
   ### People Modules
 

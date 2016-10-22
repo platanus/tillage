@@ -1,0 +1,27 @@
+#!/usr/bin/env bash
+# Usage: tillage gem <package>
+# Help: Globally installs or upgrade a gem
+#
+#    tillage gem rails
+set -e
+[ -n "$TILLAGE_DEBUG" ] && set -x
+
+gem_install_or_update() {
+  if gem list "$1" --installed > /dev/null; then
+    echo "Updating $1 ..."
+    gem update "$@"
+  else
+    echo "Installing $1 ..."
+    gem install "$@"
+  fi
+}
+
+command="$1"
+case "$command" in
+"")
+  tillage-help gem >&2
+  ;;
+*)
+  gem_install_or_update "$1"
+  ;;
+esac

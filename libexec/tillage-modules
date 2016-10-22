@@ -1,0 +1,23 @@
+#!/usr/bin/env bash
+# Summary: List all the available tillage modules
+# Usage: tillage modules
+
+set -e
+[ -n "$TILLAGE_DEBUG" ] && set -x
+
+list_modules(){
+  table="NAME\n"
+  for module in $_TILLAGE_MODULES/*; do
+    module_rel_path=$(basename "$module")
+    module_name=${module_rel_path#*-}
+    table+="$module_name\n"
+  done
+  echo -e "$table" | column -t
+}
+
+command="$1"
+case "$command" in
+* )
+  list_modules
+  ;;
+esac

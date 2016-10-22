@@ -1,0 +1,27 @@
+#!/usr/bin/env bash
+# Usage: tillage npm <package>
+# Help: Globally installs or upgrade a node package
+#
+#    tillage npm bower
+set -e
+[ -n "$TILLAGE_DEBUG" ] && set -x
+
+npm_install_or_update() {
+  NODE_PACKAGE=$1
+  if npm list --global --depth=0 --silent "$NODE_PACKAGE" > /dev/null; then
+    echo "Updating $NODE_PACKAGE ..."
+  else
+    echo "Installing $NODE_PACKAGE ..."
+  fi
+  npm install --global "$@"
+}
+
+command="$1"
+case "$command" in
+"")
+  tillage-help npm >&2
+  ;;
+*)
+  npm_install_or_update "$1"
+  ;;
+esac

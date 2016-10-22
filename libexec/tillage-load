@@ -1,0 +1,17 @@
+#!/bin/bash
+set -e
+[ -n "$TILLAGE_DEBUG" ] && set -x
+
+# Update enviroment scripts
+tillage render-template $TILLAGE_REPO/templates/env.sh > $TILLAGE_HOME/env.sh
+tillage render-template $TILLAGE_REPO/templates/env.fish > $TILLAGE_HOME/env.fish
+
+# Include modules
+tillage module ruby
+tillage module node
+tillage module hub 70
+tillage module platanus
+
+if [ -n "$TILLAGE_GITHUB_USER" ]; then
+  tillage module "people/$TILLAGE_GITHUB_USER"
+fi

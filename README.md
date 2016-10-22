@@ -32,6 +32,16 @@ strap very lightweight and easy to use.
 
 Go to
 
+## How to use it
+
+```
+tillage strap
+tillage module
+tillage render-template
+tillage npm
+tillage gem
+```
+
 ## What it will install
 
 ### Bootstrap

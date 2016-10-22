@@ -1,4 +1,12 @@
-#!/bin/bash
+#!/usr/bin/env bash
+# Usage: tillage strap
+# Summary: Run strap script to bootstrap system
+# Help: This will print out when you run `sub help who`.
+# You can have multiple lines even!
+#
+#    Show off an example indented
+#
+# And maybe start off another one?
 set -e
 
 # Keep sudo timestamp updated while Strap is running.
@@ -53,7 +61,7 @@ STRAP_ISSUES_URL="https://github.com/platanus/tillage/issues/new"
 STRAP_SCRIPT_PATH="$(cd "$(dirname "$0")" && pwd)/$(basename "$0")"
 [ -L "$STRAP_SCRIPT_PATH" ] && STRAP_SCRIPT_PATH="$(readlink "$STRAP_SCRIPT_PATH")"
 STRAP_HOME="$(dirname "$(dirname "$STRAP_SCRIPT_PATH")")"
-STRAP_FULL_PATH=$STRAP_HOME/lib/tillage-strap
+STRAP_FULL_PATH=$STRAP_HOME/libexec/tillage-strap
 
 abort() { STRAP_STEP="";   echo "!!! $@" >&2; exit 1; }
 log()   { STRAP_STEP="$@"; echo "--> $@"; }
@@ -227,18 +235,18 @@ logk
 
 # Check and install any remaining software updates.
 logn "Checking for software updates:"
-if softwareupdate -l 2>&1 | grep $Q "No new software available."; then
-  logk
-else
-  echo
-  log "Installing software updates:"
-  if [ -z "$STRAP_CI" ]; then
-    sudo softwareupdate --install --all
-    xcode_license
-  else
-    echo "Skipping software updates for CI"
-  fi
-  logk
-fi
+# if softwareupdate -l 2>&1 | grep $Q "No new software available."; then
+#   logk
+# else
+#   echo
+#   log "Installing software updates:"
+#   if [ -z "$STRAP_CI" ]; then
+#     sudo softwareupdate --install --all
+#     xcode_license
+#   else
+#     echo "Skipping software updates for CI"
+#   fi
+#   logk
+# fi
 
 STRAP_SUCCESS="1"

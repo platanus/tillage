@@ -6,7 +6,7 @@
 
 # Load node module environment
 # shellcheck disable=1090
-. "$TILLAGE_HOME/env.d/$MODULE_ENV_PRIORITY-$MODULE_NAME.sh"
+. "$_TILLAGE_ENV_D/$MODULE_ENV_PRIORITY-$MODULE_NAME.sh"
 
 # Install the latest node version
 node_version="$(curl -sSL http://node.platan.us/latest)"
@@ -19,6 +19,6 @@ fi
 export NODENV_VERSION=$node_version_alias
 
 # Install or update base packages
-npm_install_or_update 'npm'
-npm_install_or_update 'yo'
-npm_install_or_update 'generator-platanus-ionic'
+tillage npm 'npm'
+tillage npm 'yo'
+tillage npm 'generator-platanus-ionic'

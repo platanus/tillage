@@ -1,12 +1,13 @@
 #!/bin/sh
-
+set -e
+[ -n "$TILLAGE_DEBUG" ] && set -x
 ####################
 # ruby module script
 ####################
 
 # Load ruby module environment
 # shellcheck disable=1090
-. "$TILLAGE_HOME/env.d/$MODULE_ENV_PRIORITY-$MODULE_NAME.sh"
+. "$_TILLAGE_ENV_D/$MODULE_ENV_PRIORITY-$MODULE_NAME.sh"
 
 # Install the latest ruby version
 ruby_version="$(curl -sSL http://ruby.platan.us/latest)"
@@ -18,9 +19,14 @@ fi
 
 export RBENV_VERSION=$ruby_version_alias
 
+# Install or update base system gems
+gem update --system
+tillage gem 'bundler'
+number_of_cores=$(sysctl -n hw.ncpu)
+bundle config --global jobs $((number_of_cores - 1))
+
 # Install or update base gems
-gem_install_or_update 'bundler'
-gem_install_or_update 'negroku'
-gem_install_or_update 'potassium'
-gem_install_or_update 'powder'
-gem_install_or_update 'rubocop'
+tillage gem 'negroku'
+tillage gem 'potassium'
+tillage gem 'powder'
+tillage gem 'rubocop'

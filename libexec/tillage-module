@@ -1,0 +1,73 @@
+#!/usr/bin/env bash
+# Summary: Runs the provided tillage module
+# Usage: tillage module <module-name>
+
+set -e
+[ -n "$TILLAGE_DEBUG" ] && set -x
+
+include_module() {
+  export MODULE_NAME=$(basename "$1")
+  export MODULE_PATH="$_TILLAGE_MODULES/$MODULE_NAME"
+
+  if [ ! -d "$MODULE_PATH" ]; then
+    echo "The module $MODULE_NAME doens't exist"
+    exit 1
+  fi
+
+  case $2 in
+      ''|*[!0-9]*) MODULE_ENV_PRIORITY=20 ;;
+      *) MODULE_ENV_PRIORITY=$2 ;;
+  esac
+  export MODULE_ENV_PRIORITY
+
+  cd "$TILLAGE_REPO" || exit
+
+  if [ -d "$MODULE_PATH" ]; then
+    echo "--> Installing $MODULE_NAME module:"
+
+    MODULE_BREWFILE_PATH="$MODULE_PATH/Brewfile"
+    MODULE_SCRIPT_PATH="$MODULE_PATH/$MODULE_NAME.sh"
+
+    setup_environment
+    install_module_brewfile
+    run_module_script
+  fi
+}
+
+install_module_brewfile(){
+  # Install Modules Brewfile
+  if [ -f "$MODULE_BREWFILE_PATH" ]; then
+    brew bundle --file="$MODULE_BREWFILE_PATH" --verbose
+  fi
+}
+
+run_module_script(){
+  # Run module script
+  echo $MODULE_SCRIPT_PATH
+  if [ -f "$MODULE_SCRIPT_PATH" ]; then
+    #shellcheck disable=1090
+    sh "$MODULE_SCRIPT_PATH"
+  fi
+}
+
+setup_environment(){
+  # Add enviroment script to env.d
+  for ext in "sh" "fish"; do
+    if [ -f "$MODULE_PATH/templates/env.$ext" ]; then
+      if [ -f $_TILLAGE_ENV_D/*$MODULE_NAME.$ext ]; then
+        rm -f $_TILLAGE_ENV_D/*$MODULE_NAME.$ext
+      fi
+      tillage render-template "$MODULE_PATH/templates/env.$ext" > "$_TILLAGE_ENV_D/$MODULE_ENV_PRIORITY-$MODULE_NAME.$ext"
+    fi
+  done
+}
+
+command="$1"
+case "$command" in
+"" )
+  tillage-help module >&2
+  ;;
+* )
+  include_module "$1"
+  ;;
+esac
